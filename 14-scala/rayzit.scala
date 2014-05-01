@@ -12,8 +12,8 @@ import java.io._
 
 object rayzit {
   def main(args: Array[String]) {
-    print("Menu\n====\n1.Geo Rayzs\n2.Latest Rayzs\n\nPlease enter the number of your choice:")
-    var choice = scala.Console.readInt()
+    //print("Menu\n====\n1.Geo Rayzs\n2.Latest Rayzs\n\nPlease enter the number of your choice:")
+    var choice = scala.Console.readLine()
 
     /*Initialization of variables*/
     var j = 0;
@@ -21,18 +21,20 @@ object rayzit {
     var col1_t = "";
     var col2_t = "";
     var col3_t = "";
-
-    if (choice == 1) {
+    if(choice.contains("./geo_msgs")){
       /*For geo rayzs*/
-      println("1.Geo-sort\n2.Geo-max-retransmitted\n3.Geo-Oldest")
-      print("Please enter your choice:")
-      choice = scala.Console.readInt();
-      print("Please enter the radius you would like:")
-      val radius = scala.Console.readInt()
-      println("The number you enter is " + radius)
-
-      val latitude = 33.221232
-      val longitude = 35.231231
+      //println("1.Geo-sort\n2.Geo-max-retransmitted\n3.Geo-Oldest")
+      //print("Please enter your choice:")
+      //choice = scala.Console.readInt();
+      //print("Please enter the radius you would like:")
+      //val radius = scala.Console.readInt()
+      //println("The number you enter is " + radius)
+      var args=choice.split(" ");
+      //val latitude = 33.221232
+      val latitude = args(1);
+      //val longitude = 35.231231
+      val longitude = args(2);
+      val radius = args(3);
       //"http://api.rayzit.com/nearbyrayz/33.221232/35.231231/500000"
       val url = "http://api.rayzit.com/nearbyrayz/" + latitude + "/" + longitude + "/" + radius
       //println(url)
@@ -76,94 +78,96 @@ object rayzit {
 
         }
 
-        /*For debugging*/ /*
+        /*For debugging*/ 
         println(geo_rayzs(i)(0))
         println(geo_rayzs(i)(1))
         println(geo_rayzs(i)(2))
-				*/
+				
         writer.write(geo_rayzs(i)(0) + "\n")
         writer.write(geo_rayzs(i)(1) + "\n")
         writer.write(geo_rayzs(i)(2) + "\n")
         writer.close()
       }
 
-      if (choice == 1) {
-        /*Start of geo-sort*/
-        println("\nGeo-Sort")
-        for (i <- 0 to geo_rayzs.length - 2) {
-          for (j <- i + 1 to geo_rayzs.length - 1) {
-            if (geo_rayzs(i)(1) < geo_rayzs(j)(1)) {
-              col1_t = geo_rayzs(i)(0)
-              col2_t = geo_rayzs(i)(1)
-              col3_t = geo_rayzs(i)(2)
-              geo_rayzs(i)(0) = geo_rayzs(j)(0)
-              geo_rayzs(i)(1) = geo_rayzs(j)(1)
-              geo_rayzs(i)(2) = geo_rayzs(j)(2)
-              geo_rayzs(j)(0) = col1_t
-              geo_rayzs(j)(1) = col2_t
-              geo_rayzs(j)(2) = col3_t
-            } //end if
-          } //end of inner for
-        } //end of outter for
-
-        for (i <- 0 to geo_rayzs.length - 1) {
-          println(geo_rayzs(i)(1) + " " + geo_rayzs(i)(0) + " " + geo_rayzs(i)(2))
-        }
-        /*End of geo-sort*/
-      } else if (choice == 2) {
-        /*Start of geo-max-retransmitted*/
-        println("\nGeo-max-retransmitted")
-        for (i <- 0 to geo_rayzs.length - 2) {
-          for (j <- i + 1 to geo_rayzs.length - 1) {
-            if (geo_rayzs(i)(2) < geo_rayzs(j)(2)) {
-              col1_t = geo_rayzs(i)(0)
-              col2_t = geo_rayzs(i)(1)
-              col3_t = geo_rayzs(i)(2)
-              geo_rayzs(i)(0) = geo_rayzs(j)(0)
-              geo_rayzs(i)(1) = geo_rayzs(j)(1)
-              geo_rayzs(i)(2) = geo_rayzs(j)(2)
-              geo_rayzs(j)(0) = col1_t
-              geo_rayzs(j)(1) = col2_t
-              geo_rayzs(j)(2) = col3_t
-            } //end if
-          } //end of inner for
-        } //end of outter for
-
-        println(geo_rayzs(0)(2) + " " + geo_rayzs(0)(1) + " " + geo_rayzs(0)(0))
-
-        /*End of geo-max-retransmitted*/
-      } else {
-        /*Start of Geo-oldest*/
-        println("\nGeo-oldest")
-        for (i <- 0 to geo_rayzs.length - 2) {
-          for (j <- i + 1 to geo_rayzs.length - 1) {
-            if (geo_rayzs(i)(1) < geo_rayzs(j)(1)) {
-              col1_t = geo_rayzs(i)(0)
-              col2_t = geo_rayzs(i)(1)
-              col3_t = geo_rayzs(i)(2)
-              geo_rayzs(i)(0) = geo_rayzs(j)(0)
-              geo_rayzs(i)(1) = geo_rayzs(j)(1)
-              geo_rayzs(i)(2) = geo_rayzs(j)(2)
-              geo_rayzs(j)(0) = col1_t
-              geo_rayzs(j)(1) = col2_t
-              geo_rayzs(j)(2) = col3_t
-            } //end if
-          } //end of inner for
-        } //end of outter for
-        println(geo_rayzs(geo_rayzs.length - 1)(2) + " " + geo_rayzs(geo_rayzs.length - 1)(1) + " " + geo_rayzs(geo_rayzs.length - 1)(0))
-        /*End of Geo-oldest*/
-      }
-    } else {
+//      if (choice == 1) {
+//        /*Start of geo-sort*/
+//        println("\nGeo-Sort")
+//        for (i <- 0 to geo_rayzs.length - 2) {
+//          for (j <- i + 1 to geo_rayzs.length - 1) {
+//            if (geo_rayzs(i)(1) < geo_rayzs(j)(1)) {
+//              col1_t = geo_rayzs(i)(0)
+//              col2_t = geo_rayzs(i)(1)
+//              col3_t = geo_rayzs(i)(2)
+//              geo_rayzs(i)(0) = geo_rayzs(j)(0)
+//              geo_rayzs(i)(1) = geo_rayzs(j)(1)
+//              geo_rayzs(i)(2) = geo_rayzs(j)(2)
+//              geo_rayzs(j)(0) = col1_t
+//              geo_rayzs(j)(1) = col2_t
+//              geo_rayzs(j)(2) = col3_t
+//            } //end if
+//          } //end of inner for
+//        } //end of outter for
+//
+//        for (i <- 0 to geo_rayzs.length - 1) {
+//          println(geo_rayzs(i)(1) + " " + geo_rayzs(i)(0) + " " + geo_rayzs(i)(2))
+//        }
+//        /*End of geo-sort*/
+//      } else if (choice == 2) {
+//        /*Start of geo-max-retransmitted*/
+//        println("\nGeo-max-retransmitted")
+//        for (i <- 0 to geo_rayzs.length - 2) {
+//          for (j <- i + 1 to geo_rayzs.length - 1) {
+//            if (geo_rayzs(i)(2) < geo_rayzs(j)(2)) {
+//              col1_t = geo_rayzs(i)(0)
+//              col2_t = geo_rayzs(i)(1)
+//              col3_t = geo_rayzs(i)(2)
+//              geo_rayzs(i)(0) = geo_rayzs(j)(0)
+//              geo_rayzs(i)(1) = geo_rayzs(j)(1)
+//              geo_rayzs(i)(2) = geo_rayzs(j)(2)
+//              geo_rayzs(j)(0) = col1_t
+//              geo_rayzs(j)(1) = col2_t
+//              geo_rayzs(j)(2) = col3_t
+//            } //end if
+//          } //end of inner for
+//        } //end of outter for
+//
+//        println(geo_rayzs(0)(2) + " " + geo_rayzs(0)(1) + " " + geo_rayzs(0)(0))
+//
+//        /*End of geo-max-retransmitted*/
+//      } else {
+//        /*Start of Geo-oldest*/
+//        println("\nGeo-oldest")
+//        for (i <- 0 to geo_rayzs.length - 2) {
+//          for (j <- i + 1 to geo_rayzs.length - 1) {
+//            if (geo_rayzs(i)(1) < geo_rayzs(j)(1)) {
+//              col1_t = geo_rayzs(i)(0)
+//              col2_t = geo_rayzs(i)(1)
+//              col3_t = geo_rayzs(i)(2)
+//              geo_rayzs(i)(0) = geo_rayzs(j)(0)
+//              geo_rayzs(i)(1) = geo_rayzs(j)(1)
+//              geo_rayzs(i)(2) = geo_rayzs(j)(2)
+//              geo_rayzs(j)(0) = col1_t
+//              geo_rayzs(j)(1) = col2_t
+//              geo_rayzs(j)(2) = col3_t
+//            } //end if
+//          } //end of inner for
+//        } //end of outter for
+//        println(geo_rayzs(geo_rayzs.length - 1)(2) + " " + geo_rayzs(geo_rayzs.length - 1)(1) + " " + geo_rayzs(geo_rayzs.length - 1)(0))
+//        /*End of Geo-oldest*/
+//      }
+    } else if(choice.contains("./latest_msgs")){
       /*-------------------
      * 	For time rayz		*
      * -----------------*/
-      println("1.Latest-sort\n2.Latest-Oldest")
-      print("Please enter your choice:")
-      choice = scala.Console.readInt();
-      print("Please enter the time you would like:")
-      val time = scala.Console.readInt()
-      println("The number you enter is " + time)
-
+      
+//      println("1.Latest-sort\n2.Latest-Oldest")
+//      print("Please enter your choice:")
+//      choice = scala.Console.readInt();
+//      print("Please enter the time you would like:")
+//      val time = scala.Console.readInt()
+//      println("The number you enter is " + time)
+      val args = choice.split(" ");
+      val time = args(2);
       val url_t = "http://api.rayzit.com/latest/rayz/" + time
       println(url_t)
 
@@ -210,10 +214,10 @@ object rayzit {
 
         }
 
-        /*For debugging*/ /*
+        /*For debugging*/ 
         println(latest_rayzs(i)(0))
         println(latest_rayzs(i)(1))
-        println(latest_rayzs(i)(2))*/
+        println(latest_rayzs(i)(2))
 
         writer.write(latest_rayzs(i)(0) + "\n")
         writer.write(latest_rayzs(i)(1) + "\n")
@@ -222,51 +226,51 @@ object rayzit {
         //println()
       }
 
-      if (choice == 1) {
-        /*Start of latest-sort*/
-        println("\nLatest-sort")
-        for (i <- 0 to latest_rayzs.length - 2) {
-          for (j <- i + 1 to latest_rayzs.length - 1) {
-            if (latest_rayzs(i)(1) < latest_rayzs(j)(1)) {
-              col1_t = latest_rayzs(i)(0)
-              col2_t = latest_rayzs(i)(1)
-              col3_t = latest_rayzs(i)(2)
-              latest_rayzs(i)(0) = latest_rayzs(j)(0)
-              latest_rayzs(i)(1) = latest_rayzs(j)(1)
-              latest_rayzs(i)(2) = latest_rayzs(j)(2)
-              latest_rayzs(j)(0) = col1_t
-              latest_rayzs(j)(1) = col2_t
-              latest_rayzs(j)(2) = col3_t
-            } //end if
-          } //end of inner for
-        } //end of outter for
-
-        for (i <- 0 to latest_rayzs.length - 1) {
-          println(latest_rayzs(i)(1) + " " + latest_rayzs(i)(0) + " " + latest_rayzs(i)(2))
-        }
-        /*End of latest-sort*/
-      } else if (choice == 2) {
-        /*Start of latest-oldest*/
-        println("\nLatest-Oldest")
-        for (i <- 0 to latest_rayzs.length - 2) {
-          for (j <- i + 1 to latest_rayzs.length - 1) {
-            if (latest_rayzs(i)(1) < latest_rayzs(j)(1)) {
-              col1_t = latest_rayzs(i)(0)
-              col2_t = latest_rayzs(i)(1)
-              col3_t = latest_rayzs(i)(2)
-              latest_rayzs(i)(0) = latest_rayzs(j)(0)
-              latest_rayzs(i)(1) = latest_rayzs(j)(1)
-              latest_rayzs(i)(2) = latest_rayzs(j)(2)
-              latest_rayzs(j)(0) = col1_t
-              latest_rayzs(j)(1) = col2_t
-              latest_rayzs(j)(2) = col3_t
-            } //end if
-          } //end of inner for
-        } //end of outter for
-
-        println(latest_rayzs(latest_rayzs.length - 1)(1) + " " + latest_rayzs(latest_rayzs.length - 1)(0) + " " + latest_rayzs(latest_rayzs.length - 1)(2))
-        /*End of latest-oldest*/
-      }
+//      if (choice == 1) {
+//        /*Start of latest-sort*/
+//        println("\nLatest-sort")
+//        for (i <- 0 to latest_rayzs.length - 2) {
+//          for (j <- i + 1 to latest_rayzs.length - 1) {
+//            if (latest_rayzs(i)(1) < latest_rayzs(j)(1)) {
+//              col1_t = latest_rayzs(i)(0)
+//              col2_t = latest_rayzs(i)(1)
+//              col3_t = latest_rayzs(i)(2)
+//              latest_rayzs(i)(0) = latest_rayzs(j)(0)
+//              latest_rayzs(i)(1) = latest_rayzs(j)(1)
+//              latest_rayzs(i)(2) = latest_rayzs(j)(2)
+//              latest_rayzs(j)(0) = col1_t
+//              latest_rayzs(j)(1) = col2_t
+//              latest_rayzs(j)(2) = col3_t
+//            } //end if
+//          } //end of inner for
+//        } //end of outter for
+//
+//        for (i <- 0 to latest_rayzs.length - 1) {
+//          println(latest_rayzs(i)(1) + " " + latest_rayzs(i)(0) + " " + latest_rayzs(i)(2))
+//        }
+//        /*End of latest-sort*/
+//      } else if (choice == 2) {
+//        /*Start of latest-oldest*/
+//        println("\nLatest-Oldest")
+//        for (i <- 0 to latest_rayzs.length - 2) {
+//          for (j <- i + 1 to latest_rayzs.length - 1) {
+//            if (latest_rayzs(i)(1) < latest_rayzs(j)(1)) {
+//              col1_t = latest_rayzs(i)(0)
+//              col2_t = latest_rayzs(i)(1)
+//              col3_t = latest_rayzs(i)(2)
+//              latest_rayzs(i)(0) = latest_rayzs(j)(0)
+//              latest_rayzs(i)(1) = latest_rayzs(j)(1)
+//              latest_rayzs(i)(2) = latest_rayzs(j)(2)
+//              latest_rayzs(j)(0) = col1_t
+//              latest_rayzs(j)(1) = col2_t
+//              latest_rayzs(j)(2) = col3_t
+//            } //end if
+//          } //end of inner for
+//        } //end of outter for
+//
+//        println(latest_rayzs(latest_rayzs.length - 1)(1) + " " + latest_rayzs(latest_rayzs.length - 1)(0) + " " + latest_rayzs(latest_rayzs.length - 1)(2))
+//        /*End of latest-oldest*/
+//      }
     }
   }
 }
