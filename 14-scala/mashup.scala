@@ -1,168 +1,254 @@
 import scala.io.Source;
+import java.io._
+import java.util.{Date, LinkedList}
+;
+object mashUp{
 
-object mashup {
-  def main(args: Array[String]) {
-
-    rayzit.main(args)
-    /*Get latest_rayz*/
-    var latest_rayz = new java.io.File("latest_rayz").listFiles().length
-    var i = 0
-    var j = 0
-    var filename = "rayz"
-    var latest_rayzs = Array.ofDim[String](latest_rayz, 3)
-    var path = ""
-    for (i <- 1 to latest_rayz) {
-      filename = "rayz_" + i
-      path = "latest_rayz\\" + filename
-      j = 0
-      for (line <- Source.fromFile(path).getLines()) {
-        latest_rayzs(i - 1)(j) = line
-        j += 1
-        //println(line)
+  def geo_oldest(geo: Array [Message])={
+    var oldest= new Message;
+    oldest.setTimestamp(scala.Long.MaxValue.toString);
+    val bound:Int=(geo.length)-1;
+    for (i <- 0 to bound){
+      if ((geo(i).getTime.toLong)<(oldest.getTime.toLong)){
+        oldest.setText(geo(i).getText);
+        oldest.setTimestamp(geo(i).getTime.toString);
+        oldest.setCount(geo(i).getCount);
       }
-      //println
     }
+    println(">> Geo Oldest Message is: ");
+    println("-> Text: "+ oldest.getText);
+    var formatted_time: Long = oldest.getTime.toLong
+    var datetime: Date = new Date(formatted_time)
 
-    /*Get geo_rayz*/
-    var geo_rayz = new java.io.File("geo_rayz").listFiles().length
-    i = 0
-    j = 0
-    filename = "rayz"
-    var geo_rayzs = Array.ofDim[String](geo_rayz, 3)
-    path = ""
-    for (i <- 1 to geo_rayz) {
-      filename = "rayz_" + i
-      path = "geo_rayz\\" + filename
-      j = 0
-      for (line <- Source.fromFile(path).getLines()) {
-        geo_rayzs(i - 1)(j) = line
-        j += 1
-        //println(line)
+    println("-> Time: " + datetime);
+    println("-> Recount: "+ oldest.getCount);
+
+  }
+
+
+  def latest_oldest(latest: Array [Message])={
+    var oldest= new Message;
+    oldest.setTimestamp(scala.Long.MaxValue.toString);
+    val bound:Int=latest.length-1;
+    for (i <- 0 to bound){
+      if ((latest(i).getTime.toLong)<(oldest.getTime.toLong)){
+        oldest.setText(latest(i).getText);
+        oldest.setTimestamp(latest(i).getTime.toString);
+        oldest.setCount(latest(i).getCount);
       }
-      //println
     }
+    println(">> Latest Oldest Message is: ");
+    println("-> Text: "+ oldest.getText);
+    var formatted_time: Long = oldest.getTime.toLong
+    var datetime: Date = new Date(formatted_time)
 
-    /*Start Mashup*/
-    var col1_t = ""
-    var col2_t = ""
-    var col3_t = ""
-    println("1.Geo-sort\n2.Geo-max-retransmitted\n3.Geo-Oldest\n4.Latest-sort\n5.Latest-Oldest")
-    print("Enter your choice:")
-    var choice = scala.Console.readInt();
-    if (choice == 1) {
-      /*Start of geo-sort*/
-      println("\nGeo-Sort")
-      for (i <- 0 to geo_rayzs.length - 2) {
-        for (j <- i + 1 to geo_rayzs.length - 1) {
-          if (geo_rayzs(i)(1) < geo_rayzs(j)(1)) {
-            col1_t = geo_rayzs(i)(0)
-            col2_t = geo_rayzs(i)(1)
-            col3_t = geo_rayzs(i)(2)
-            geo_rayzs(i)(0) = geo_rayzs(j)(0)
-            geo_rayzs(i)(1) = geo_rayzs(j)(1)
-            geo_rayzs(i)(2) = geo_rayzs(j)(2)
-            geo_rayzs(j)(0) = col1_t
-            geo_rayzs(j)(1) = col2_t
-            geo_rayzs(j)(2) = col3_t
-          } //end if
-        } //end of inner for
-      } //end of outter for
+    println("-> Time: " + datetime);
+    println("-> Recount: "+ oldest.getCount);
+  }
 
-      for (i <- 0 to geo_rayzs.length - 1) {
-        println(geo_rayzs(i)(1) + " " + geo_rayzs(i)(0) + " " + geo_rayzs(i)(2))
+
+  def all_build_lexicon(geo:Array[Message], latest:Array[Message])={
+    val msgCount: Int= geo.length+latest.length;
+    var msgs=new Array[String](msgCount);
+    var position:Int=0;
+    var value:Int=0;
+
+    for (i <- 0 to (geo.length-1)){
+      msgs(i)=geo(i).getText;
+    }
+    for (i<- 0 to (latest.length-1)){
+      msgs(i+geo.length)=latest(i).getText;
+    }
+    var listOfStrings=new LinkedList[String]();
+    var listOfCounts=new LinkedList[Int]();
+
+    for (i <- 0 to (msgCount-1)){
+      msgs(i)=msgs(i).toLowerCase;
+      msgs(i)=msgs(i).replaceAll("\"","");
+      msgs(i)=msgs(i).replaceAll(":","");
+      msgs(i)=msgs(i).replaceAll("!","");
+      msgs(i)=msgs(i).replaceAll("-","");
+      msgs(i)=msgs(i).replaceAll("\\?","");
+      msgs(i)=msgs(i).replaceAll("@","");
+      msgs(i)=msgs(i).replaceAll("#","");
+      msgs(i)=msgs(i).replaceAll("$","");
+      msgs(i)=msgs(i).replaceAll("=","");
+      msgs(i)=msgs(i).replaceAll("\\.","");
+      msgs(i)=msgs(i).replaceAll("\\\\","");
+      val splitted=msgs(i).split(" +");
+
+      for (j <- 0 until splitted.length ){
+        if (!listOfStrings.contains(splitted(j))){
+          listOfStrings.add(splitted(j));
+          listOfCounts.add(1);
+        }
+        else {
+          position=listOfStrings.indexOf(splitted(j));
+          value=listOfCounts.get(position);
+          value=value+1;
+          listOfCounts.set(position, value);
+        }
       }
-      /*End of geo-sort*/
     }
-    if (choice == 2) {
-      /*Start of geo-max-retransmitted*/
-      println("\nGeo-max-retransmitted")
-      for (i <- 0 to geo_rayzs.length - 2) {
-        for (j <- i + 1 to geo_rayzs.length - 1) {
-          if (geo_rayzs(i)(2) < geo_rayzs(j)(2)) {
-            col1_t = geo_rayzs(i)(0)
-            col2_t = geo_rayzs(i)(1)
-            col3_t = geo_rayzs(i)(2)
-            geo_rayzs(i)(0) = geo_rayzs(j)(0)
-            geo_rayzs(i)(1) = geo_rayzs(j)(1)
-            geo_rayzs(i)(2) = geo_rayzs(j)(2)
-            geo_rayzs(j)(0) = col1_t
-            geo_rayzs(j)(1) = col2_t
-            geo_rayzs(j)(2) = col3_t
-          } //end if
-        } //end of inner for
-      } //end of outter for
+    val strings=new Array[String](listOfStrings.size());
+    val counts=new Array[Int](listOfCounts.size());
 
-      println(geo_rayzs(0)(2) + " " + geo_rayzs(0)(1) + " " + geo_rayzs(0)(0))
-
-      /*End of geo-max-retransmitted*/
+    for (i<- 0 until listOfStrings.size()){
+      strings(i)=listOfStrings.get(i);
     }
-    if (choice == 3) {
-      println("\nGeo-oldest")
-      for (i <- 0 to geo_rayzs.length - 2) {
-        for (j <- i + 1 to geo_rayzs.length - 1) {
-          if (geo_rayzs(i)(1) < geo_rayzs(j)(1)) {
-            col1_t = geo_rayzs(i)(0)
-            col2_t = geo_rayzs(i)(1)
-            col3_t = geo_rayzs(i)(2)
-            geo_rayzs(i)(0) = geo_rayzs(j)(0)
-            geo_rayzs(i)(1) = geo_rayzs(j)(1)
-            geo_rayzs(i)(2) = geo_rayzs(j)(2)
-            geo_rayzs(j)(0) = col1_t
-            geo_rayzs(j)(1) = col2_t
-            geo_rayzs(j)(2) = col3_t
-          } //end if
-        } //end of inner for
-      } //end of outter for
-      println(geo_rayzs(geo_rayzs.length - 1)(2) + " " + geo_rayzs(geo_rayzs.length - 1)(1) + " " + geo_rayzs(geo_rayzs.length - 1)(0))
-      /*End of Geo-oldest*/
+    for (i<- 0 until listOfCounts.size()){
+      counts(i)=listOfCounts.get(i);
     }
-    if (choice == 4) {
-      /*Start of latest-sort*/
-      println("\nLatest-sort")
-      for (i <- 0 to latest_rayzs.length - 2) {
-        for (j <- i + 1 to latest_rayzs.length - 1) {
-          if (latest_rayzs(i)(1) < latest_rayzs(j)(1)) {
-            col1_t = latest_rayzs(i)(0)
-            col2_t = latest_rayzs(i)(1)
-            col3_t = latest_rayzs(i)(2)
-            latest_rayzs(i)(0) = latest_rayzs(j)(0)
-            latest_rayzs(i)(1) = latest_rayzs(j)(1)
-            latest_rayzs(i)(2) = latest_rayzs(j)(2)
-            latest_rayzs(j)(0) = col1_t
-            latest_rayzs(j)(1) = col2_t
-            latest_rayzs(j)(2) = col3_t
-          } //end if
-        } //end of inner for
-      } //end of outter for
+    sort_lexicon(strings,counts);
+  }
 
-      for (i <- 0 to latest_rayzs.length - 1) {
-        println(latest_rayzs(i)(1) + " " + latest_rayzs(i)(0) + " " + latest_rayzs(i)(2))
+
+  def sort_lexicon(strings: Array[String], counts:Array[Int]){
+    var temp:Int=0;
+    var temp1:String="";
+    for(i<- 0 until strings.length){
+
+      //Inner loop to perform comparision and swapping between adjacent numbers
+      //After each iteration one index from last is sorted
+      for(j<- 1 until (strings.length-i)){
+        //If current number is greater than swap those two
+        if(counts(j-1) < counts(j)){
+          temp = counts(j);
+          temp1=strings(j);
+          counts(j) = counts(j-1);
+          strings(j)=strings(j-1);
+          counts(j-1) = temp;
+          strings(j-1)=temp1;
+        }
       }
-      /*End of latest-sort*/
-
     }
-    if (choice == 5) {
-      /*Start of latest-oldest*/
-      println("\nLatest-Oldest")
-      for (i <- 0 to latest_rayzs.length - 2) {
-        for (j <- i + 1 to latest_rayzs.length - 1) {
-          if (latest_rayzs(i)(1) < latest_rayzs(j)(1)) {
-            col1_t = latest_rayzs(i)(0)
-            col2_t = latest_rayzs(i)(1)
-            col3_t = latest_rayzs(i)(2)
-            latest_rayzs(i)(0) = latest_rayzs(j)(0)
-            latest_rayzs(i)(1) = latest_rayzs(j)(1)
-            latest_rayzs(i)(2) = latest_rayzs(j)(2)
-            latest_rayzs(j)(0) = col1_t
-            latest_rayzs(j)(1) = col2_t
-            latest_rayzs(j)(2) = col3_t
-          } //end if
-        } //end of inner for
-      } //end of outter for
 
-      println(latest_rayzs(latest_rayzs.length - 1)(1) + " " + latest_rayzs(latest_rayzs.length - 1)(0) + " " + latest_rayzs(latest_rayzs.length - 1)(2))
-      /*End of latest-oldest*/
+    val writer = new PrintWriter(new File("lexicon.txt" ))
+    for (i<- 0 until counts.length){
+      writer.write(strings(i)+ "\t"+ counts(i) + "\n");
     }
+    writer.close()
+  }
+
+
+  def readMessagesFilesGeo:Array[Message]={
+    //Find the Rayzit Messages
+    val rayzitCount= new java.io.File("geo_msgs/rayzit_msgs/").listFiles().length;
+    val twitterCount= new java.io.File("geo_msgs/twitter_msgs/").listFiles().length;
+    val count=rayzitCount+twitterCount;
+    val files =new Array[Message](count);
+    var filename: String="";
+    var path:String ="";
+    var line: String="";
+
+    for (i <- 0 to (rayzitCount-1)){
+      filename=(i+1) + ".txt";
+      path = "geo_msgs/rayzit_msgs/" + filename
+      var newEntry=new Message;
+      var source = Source.fromFile(path).getLines
+      while (source.hasNext) {
+        if ((line=source.next)!= null){
+          if (line.startsWith("Text: ")){
+            newEntry.setText(line.substring(6));
+          }
+          else if (line.startsWith("Time: ")){
+            newEntry.setTimestamp(line.substring(6))
+          }
+          else if (line.startsWith("Rerayzs: ")){
+            newEntry.setCount(line.substring(9).toInt)
+          }
+        }
+      }
+      files(i)=newEntry;
+    }
+
+    for (i <- 0 to (twitterCount-1)){
+      filename=(i+1)+".txt";
+      path="geo_msgs/twitter_msgs/"+filename
+      var newEntry= new Message();
+      var source = Source.fromFile(path).getLines
+      while (source.hasNext) {
+        if ((line=source.next)!=null){
+          if (line.startsWith("Text: ")){
+            newEntry.setText(line.substring(6));
+          }
+          else if (line.startsWith("Time: ")){
+            newEntry.setTimestamp(line.substring(6))
+          }
+          else if (line.startsWith("Retweets: ")){
+            newEntry.setCount(line.substring(10).toInt)
+          }
+        }
+      }
+      files(rayzitCount+i)=newEntry;
+    }
+    return files;
+  }
+
+
+  def readMessagesFilesLatest:Array[Message]={
+    //Find the Rayzit Messages
+    val rayzitCount=new java.io.File("latest_msgs/rayzit_msgs/").listFiles().length;
+    val twitterCount=new java.io.File("latest_msgs/twitter_msgs/").listFiles.length;
+    val count=rayzitCount+twitterCount;
+    val files =new Array[Message](count);
+    var filename: String="";
+    var path:String ="";
+    var line:String="";
+
+    for (i <- 0 to (rayzitCount-1)){
+      filename=(i+1) + ".txt";
+      path = "latest_msgs/rayzit_msgs/" + filename
+      var newEntry= new Message();
+      var source = Source.fromFile(path).getLines
+      while (source.hasNext) {
+        if ((line=source.next)!=null){
+          if (line.startsWith("Text: ")){
+            newEntry.setText(line.substring(6));
+          }
+          else if (line.startsWith("Time: ")){
+            newEntry.setTimestamp(line.substring(6));
+          }
+          else if (line.startsWith("Rerayzs: ")){
+            newEntry.setCount(line.substring(9).toInt)
+          }
+        }
+      }
+      files(i)=newEntry;
+    }
+
+    for (i <- 0 to (twitterCount-1)){
+      filename=(i+1)+".txt";
+      path="latest_msgs/twitter_msgs/"+filename
+      var newEntry= new Message();
+      var source = Source.fromFile(path).getLines
+      while (source.hasNext) {
+        if ((line=source.next)!= null){
+          if (line.startsWith("Text: ")){
+            newEntry.setText(line.substring(6));
+          }
+          else if (line.startsWith("Time: ")){
+            newEntry.setTimestamp(line.substring(6));
+          }
+          else if (line.startsWith("Retweets: ")){
+            newEntry.setCount(line.substring(10).toInt)
+          }
+        }
+      }
+      files(rayzitCount+i)=newEntry;
+    }
+    return files;
+  }
+
+  def main (args: Array[String]){
+    val filesGeo=readMessagesFilesGeo;
+    val filesLatest=readMessagesFilesLatest;
+
+    var option = args(0);
+    var value: String = "";
+    if (args.length > 1)
+      value = args(1);
+    option_match(option, value, filesGeo, filesLatest);
 
   }
 }
